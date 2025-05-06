@@ -1,0 +1,33 @@
+from collections import defaultdict
+
+# Map function
+def mapper(line):
+    words = line.strip().split()
+    return [(word.lower(), 1) for word in words]
+
+# Main function
+def word_count_from_file(filename):
+    mapped = []
+
+    # Read file and apply mapper
+    with open(filename, 'r') as file:
+        for line in file:
+            mapped.extend(mapper(line))
+
+    # Shuffle and sort (grouping phase)
+    grouped = defaultdict(list)
+    for word, count in mapped:
+        grouped[word].append(count)
+
+    # Reduce phase
+    reduced = {word: sum(counts) for word, counts in grouped.items()}
+
+    return reduced
+
+# Example usage
+if __name__ == "__main__":
+    filename = "sample.txt"  # replace with your filename
+    word_freq = word_count_from_file(filename)
+
+    for word, freq in sorted(word_freq.items()):
+        print(f"{word}: {freq}")
