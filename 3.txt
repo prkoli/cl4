@@ -1,0 +1,43 @@
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.decomposition import PCA
+from sklearn.metrics import classification_report, accuracy_score
+
+# Load dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+target_names = iris.target_names
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Model
+model = LogisticRegression(max_iter=200)
+model.fit(X_train, y_train)
+
+# Predict
+y_pred = model.predict(X_test)
+
+# Evaluation
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred, target_names=target_names))
+
+# Dimensionality reduction for visualization
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X)
+
+# Plot
+plt.figure(figsize=(8, 6))
+colors = ['red', 'green', 'blue']
+for i, target_name in enumerate(target_names):
+    plt.scatter(X_pca[y == i, 0], X_pca[y == i, 1], label=target_name, color=colors[i])
+
+plt.title("Iris Dataset Visualization with PCA")
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.legend()
+plt.grid(True)
+plt.show()
