@@ -1,0 +1,48 @@
+from collections import defaultdict
+
+# Grade assignment function
+def assign_grade(marks):
+    if marks >= 90:
+        return 'A'
+    elif marks >= 80:
+        return 'B'
+    elif marks >= 70:
+        return 'C'
+    elif marks >= 60:
+        return 'D'
+    else:
+        return 'F'
+
+# Mapper function
+def mapper(line):
+    name, marks = line.strip().split(',')
+    return (name, int(marks))
+
+# MapReduce-like function (without averaging)
+def get_student_grades(filename):
+    mapped = []
+
+    # Read and map
+    with open(filename, 'r') as file:
+        for line in file:
+            mapped.append(mapper(line))
+
+    # Shuffle and group by student name (redundant if names are unique)
+    grouped = defaultdict(list)
+    for name, mark in mapped:
+        grouped[name].append(mark)
+
+    # Since names are unique, extract the only mark and assign grade
+    student_grades = {name: (marks[0], assign_grade(marks[0])) for name, marks in grouped.items()}
+
+    return student_grades
+
+# Example usage
+if __name__ == "__main__":
+    filename = "grades.txt"
+    student_grades = get_student_grades(filename)
+
+    for name, (mark, grade) in sorted(student_grades.items()):
+        print(f"{name}: Marks = {mark}, Grade = {grade}")
+
+    
